@@ -5,17 +5,23 @@ module Ipd
   # Your code goes here...
   def self.addElement
       puts "add Element"
-      lines = "#{`tail log/development.log`}".split("\n")
       files = []
       times = []
-      for l in lines
-        # match the template file and the time cost on it
-        f = l.scan(/\s[a-z]+\/\S+[erb|haml|slim]\s/)
-        t = l.match(/[0-9\.]+ms/)
-        if f.length > 0 and t.length > 0
-          files.push(f[0].gsub(/\s+/, "").split('.')[0])
-          times.push(t[0])
-        end 
+            
+      ActiveSupport::Notifications.subscribe('render_template.action_view') do |name, started, finished, unique_id, payload|
+        # your own custom stuff
+        Rails.logger.info "#{finished - started} Rendered #{payload[:identifier]}!"
+        f = payload[:identifier].split("views/")[1].scan(/[a-z]+\/\S+[erb|haml|slim]/)[0].split('.')[0]
+        files << f
+        times << (finished - started) * 1000
+        
+      end
+      ActiveSupport::Notifications.subscribe('render_partial.action_view') do |name, started, finished, unique_id, payload|
+        # your own custom stuff
+        #Rails.logger.info "#{finished - started} Rendered #{payload[:identifier]}!"
+        f = payload[:identifier].split("views/")[1].scan(/[a-z]+\/\S+[erb|haml|slim]/)[0].split('.')[0]
+        files << f
+        times << (finished - started) * 1000
       end
       color = ['lightblue','yellow','pink','red','green','grey']
       index = 0
@@ -37,3 +43,4 @@ if defined?(Rails::Railtie)
 elsif defined?(Rails::Initializer)
   raise "ipd 3.0 is not compatible with Rails 2.3 or older"
 end
+
