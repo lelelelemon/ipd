@@ -4,7 +4,6 @@ require 'ipd/railtie' if defined?(Rails)
 module Ipd
   # Your code goes here...
   def self.addElement
-      puts "add Element"
       files = []
       times = []
             
@@ -12,7 +11,9 @@ module Ipd
         # your own custom stuff
         Rails.logger.info "#{finished - started} Rendered #{payload[:identifier]}!"
         f = payload[:identifier].split("views/")[1].scan(/[a-z]+\/\S+[erb|haml|slim]/)[0].split('.')[0]
-        files << f
+        
+        files << f 
+        Rails.logger.info "files length #{files.length}"
         times << (finished - started) * 1000
         
       end
@@ -28,10 +29,10 @@ module Ipd
       for f in files
         puts f
         # if the template doesn't start from an div, then this surrounding doens't work
-        Deface::Override.new(:virtual_path => f, 
-                       :name => "example-1", 
-                       :surround => "div", 
-                       :text => "<div style='background-color: #{color[index]};'><p>#{times[index]}</p><%= render_original %></div>")
+        #Deface::Override.new(:virtual_path => f, 
+        #               :name => "example-1", 
+        #               :surround => "div", 
+        #               :text => "<div style='background-color: #{color[index]};'><p>#{times[index]}</p><%= render_original %></div>")
         
         index = index + 1 
       end
