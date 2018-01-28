@@ -12,10 +12,10 @@ module Ipd
         for i in 0..(@files.length-1)
             f = @files[i]
             t = @times[i]
-            Deface::Override.new(:virtual_path => f, 
-               :name => "example-1", 
-               :surround => "div", 
-               :text => "<div id='div-#{i}' style='background-color: #{color[i]};'><p align='center'><strong>#{f}</strong>: #{t}ms <button id='button-#{i}' onclick='delete()'>Delete</button></p><%= render_original %></div><script>document.getElementById('button-#{i}').addEventListener('click', function(){document.getElementById('div-#{i}').style.display = 'none';;});</script>")
+            #Deface::Override.new(:virtual_path => f, 
+            #   :name => "example-1", 
+            #   :surround => "div", 
+            #   :text => "<div id='div-#{i}' style='background-color: #{color[i]};'><p align='center'><strong>#{f}</strong>: #{t}ms <button id='button-#{i}' onclick='delete()'>Delete</button></p><%= render_original %></div><script>document.getElementById('button-#{i}').addEventListener('click', function(){document.getElementById('div-#{i}').style.display = 'none';;});</script>")
         end
               
         @files = []
@@ -23,7 +23,7 @@ module Ipd
         return
       end 
       ActiveSupport::Notifications.subscribe('render_template.action_view') do |name, started, finished, unique_id, payload|
-        #Rails.logger.info "#{finished - started} Rendered #{payload[:identifier]} #{@files.length} !"
+        Rails.logger.info "#{finished - started} Rendered #{payload[:identifier]} #{@files.length} !"
         for i in 0..(@files.length-1)
           f = @files[i]
           t = @times[i]
