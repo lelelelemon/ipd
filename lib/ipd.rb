@@ -36,7 +36,22 @@ module Ipd
           end
         end
       end
-"""
+"""   
+      files = []
+      times = []
+      eles = []
+      files << "home/index"
+      times << "24ms"
+      eles << "ol"
+      for i in 0..files.length - 1
+        f = files[i]
+        t = times[i]
+        e = eles[i]
+        Deface::Override.new(:virtual_path => f, 
+                 :name => "example-1", 
+                 :surround => 'ol#slist', 
+                 :text => "<%= render_original %>")
+      end
       ActiveSupport::Notifications.subscribe('render_template.action_view') do |*args|
         #Rails.logger.info "#{finished - started} Rendered #{payload[:identifier]} #{@files.length} Children #{children}"
       	event = ActiveSupport::Notifications::Event.new(*args)
@@ -70,4 +85,4 @@ elsif defined?(Rails::Initializer)
   raise "ipd 3.0 is not compatible with Rails 2.3 or older"
 end
 
-
+puts "Add Element"
