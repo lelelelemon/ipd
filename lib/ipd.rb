@@ -6,7 +6,7 @@ module Ipd
   @files = []
   @times = []
   def self.addElement
-      color = ['lightblue','yellow','pink','lightgreen','grey']
+      color = ['#FFE5CC','#FFCC99','#FFB266','#FF9933','#CC6600']
       puts @files.length
       if(@files.length > 0)
         for i in 0..(@files.length-1)
