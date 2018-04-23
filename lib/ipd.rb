@@ -1,6 +1,6 @@
 require "ipd/version"
 require 'ipd/railtie' if defined?(Rails)
-
+require "ipd/engine"
 module Ipd
   # Your code goes here...
   @files = []
@@ -8,14 +8,32 @@ module Ipd
   def self.addElement
       color = ['#FFE5CC','#FFCC99','#FFB266','#FF9933','#CC6600']
       puts @files.length
+      #cost = open('cost.txt', 'r')
+      cost = ['', 'blogs/show.html.erb span#user-num 2.3', 'blogs/show.html.erb span#blog-num 64.4', 'blogs/_blog.html.erb div#blogs 224.8', 'blogs/_user.html.erb div#users 58.3', 'blogs/_blog.html.erb div#test XXX']
+      i = 0
+      for c in cost
+        record = c.split(' ')
+        if record.length != 3
+          next
+        end
+        f = record[0].scan(/[a-z]+\/\S+[erb|haml|slim]/)[0].split('.')[0]
+        id = record[1]
+        ip = record[1].scan(/#.*/)[0]
+        t = record[2]            
+        Deface::Override.new(:virtual_path => f, 
+               :name => "example-1", 
+               :surround => id, 
+               :text => "<div id='div-#{i}' style='background-color: #{color[i]};'><span align='center'><strong>#{f}</strong>: #{t}ms <button id='button-#{i}' data-toggle='popover' onclick='delete()'>Delete</button></span><%= render_original %></div><script>$('#{ip}').popover();document.getElementById('button-#{i}').addEventListener('click', function(){document.getElementById('div-#{i}').style.display = 'none';;});</script>")
+        i += 1
+      end
       if(@files.length > 0)
         for i in 0..(@files.length-1)
             f = @files[i]
             t = @times[i]
-            Deface::Override.new(:virtual_path => f, 
-               :name => "example-1", 
-               :surround => "div", 
-               :text => "<div id='div-#{i}' style='background-color: #{color[i]};'><p align='center'><strong>#{f}</strong>: #{t}ms <button id='button-#{i}' onclick='delete()'>Delete</button></p><%= render_original %></div><script>document.getElementById('button-#{i}').addEventListener('click', function(){document.getElementById('div-#{i}').style.display = 'none';;});</script>")
+            # Deface::Override.new(:virtual_path => f, 
+            #   :name => "example-1", 
+            #   :surround => "div", 
+            #   :text => "<div id='div-#{i}' style='background-color: #{color[i]};'><p align='center'><strong>#{f}</strong>: #{t}ms <button id='button-#{i}' onclick='delete()'>Delete</button></p><%= render_original %></div><script>document.getElementById('button-#{i}').addEventListener('click', function(){document.getElementById('div-#{i}').style.display = 'none';;});</script>")
         end
               
         @files = []
